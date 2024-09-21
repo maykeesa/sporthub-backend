@@ -1,5 +1,7 @@
 package br.com.sporthub.usuario
 
+import br.com.sporthub.reserva.Reserva
+import br.com.sporthub.reserva.ReservaService
 import br.com.sporthub.usuario.dto.UsuarioDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -21,6 +23,8 @@ class UsuarioController {
     private lateinit var usuarioService: UsuarioService
     @Autowired
     private lateinit var usuarioRep: UsuarioRepository
+    @Autowired
+    private lateinit var reservaService: ReservaService
 
     @GetMapping
     @Operation(summary = "Listar todos os usuários")
@@ -84,6 +88,24 @@ class UsuarioController {
 
         this.usuarioRep.deleteById(UUID.fromString(id))
         return ResponseEntity.ok().build()
+    }
+
+    @GetMapping("/{id}/reservas")
+    @Operation(summary = "Listar todos os agendamentos de um usuário")
+    @ApiResponses(value = [
+        ApiResponse(responseCode = "200", description = "Retorna uma lista de agendamentos"),
+        ApiResponse(responseCode = "204", description = "Não há agendamentos cadastrados")
+    ])
+    fun getReservas(@PathVariable id: String, @PageableDefault(sort = ["data"], direction = Sort.Direction.ASC,
+        page = 0, size = 10) paginacao: Pageable): ResponseEntity<Page<Reserva>>{
+
+        val reservasPage: Page<Reserva> = this.reservaService.getReservasByUsuarioId(paginacao, id)
+
+        if(reservasPage.isEmpty){
+            return ResponseEntity.noContent().build()
+        }
+
+        return ResponseEntity.ok(reservasPage)
     }
 
 }

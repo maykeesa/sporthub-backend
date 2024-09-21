@@ -14,5 +14,4 @@ class UsuarioService : GenericService<Usuario>(Usuario::class.java){
 
         return usuarios
     }
-
 }
