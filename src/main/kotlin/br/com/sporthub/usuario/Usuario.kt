@@ -1,5 +1,6 @@
 package br.com.sporthub.usuario
 
+import br.com.sporthub.esporte.Esporte
 import br.com.sporthub.grupo.Grupo
 import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Entity
 @Table(name = "usuarios")
@@ -30,7 +32,11 @@ class Usuario(
 
     @ManyToMany(mappedBy = "usuarios")
     @JsonBackReference
-    var grupos: List<Grupo> = ArrayList()
+    var grupos: List<Grupo> = ArrayList(),
+
+    @ManyToMany(mappedBy = "esportes")
+    @JsonBackReference
+    var esportesFavoritos: List<Esporte> = ArrayList()
 
 ) : UserDetails {
 
@@ -51,19 +57,19 @@ class Usuario(
     }
 
     override fun isAccountNonExpired(): Boolean {
-        return true // Indica se a conta está expirada
+        return true
     }
 
     override fun isAccountNonLocked(): Boolean {
-        return true // Indica se a conta está bloqueada
+        return true
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        return true // Indica se as credenciais (senha) estão expiradas
+        return true
     }
 
     override fun isEnabled(): Boolean {
-        return true // Indica se o usuário está ativo
+        return true
     }
 
     override fun toString(): String {
